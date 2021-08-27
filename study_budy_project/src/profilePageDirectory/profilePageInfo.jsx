@@ -5,10 +5,22 @@ import {userState} from "../recoil/atoms";
 import {allStyles} from "../allStyles";
 import {Label} from "@material-ui/icons";
 
-export default function ProfilePageInfo(){
-    const user = useRecoilValue(userState)
+export default function ProfilePageInfo() {
+    const {
+        user, user: {
+            first_name: firstName,
+            last_name: lastName,
+            pronouns,
+            major,
+            current_classes: currentClasses,
+            grad_year: gradYear,
+            pref_time: prefTime,
+            email,
+            study_locations: studyLocations
+        }
+    } = useRecoilValue(userState)
     const classes = makeStyles(theme => (allStyles(theme)))();
-    return(
+    return (
         <Grid container className={classes.profilePageInfoContainer} justify={"center"}>
             <Grid container xs={6} justify={"center"}>
                 <Typography className={classes.profilePageInfoLabelText}>
@@ -23,17 +35,17 @@ export default function ProfilePageInfo(){
             </Grid>
             <Grid container xs={6} justify={"center"}>
                 <Typography className={classes.profilePageInfoFieldText}>
-                    {user.first_name} {user.last_name} <br/>
-                    {user.pronouns} <br/>
-                    {user.major} <br/>
-                    {user.current_classes} <br/>
-                    {user.grad_year} <br/>
-                    {user.pref_time} <br/>
-                    {user.email} <br/>
+                    {firstName} {lastName} <br/>
+                    {pronouns} <br/>
+                    {major} <br/>
+                    {currentClasses} <br/>
+                    {gradYear} <br/>
+                    {prefTime} <br/>
+                    {email} <br/>
                 </Typography>
             </Grid>
             <Grid container xs={12} justify={"center"} className={classes.profilePageInfoFieldText}>
-                I like to study at {user.study_locations}
+                I like to study at {studyLocations}
             </Grid>
         </Grid>
     )

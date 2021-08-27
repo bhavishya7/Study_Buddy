@@ -14,7 +14,18 @@ function SignUpPageForm() {
     const windowHeight = window.innerHeight - 216;
     const classes = makeStyles(theme => (allStyles(theme, {windowHeight})))();
     const showResults = values => {
-        //console.log(typeof values)
+        const tempArray = [];
+
+        for (let i = 0; i < 8; i++){
+            const key = `current_classes_${i}`
+
+            if (key in values){
+                tempArray.push(values[key])
+            }
+        }
+        values["current_classes"] = [values["current_classes"]].concat(tempArray)
+        console.log("values", values)
+        console.log(tempArray)
         // window.alert(JSON.stringify(values, undefined, 2))
         // const userData = sendUserDB(values)
         axios.post(`http://localhost:5000/auth/addUser`, values).then((data) => {
@@ -29,7 +40,26 @@ function SignUpPageForm() {
     });
     const timeOptions = ["Morning (6AM - 12PM)", "Afternoon (12PM - 4PM)", "Evening (4PM - 8PM)", "Night (9PM or later)"];
     const classesOptions = ["CS 252", "CS 400", "CS 540", "PSYCH 202", "HIST 101", "ART 100", "ANTHRO 104"];
+    const [currClasses, setCurrClasses] = useState([1]);
     // const [userInformation, setUserInformation] = useState({});
+    // function generateClassesFields() {
+    //     const classArray = [];
+    //     for (let i = currClasses; i > 0; i--) {
+    //         classArray.push(
+    //             <Field name={"current_classes"} component={"select"} placeholder={"Select Classes"}
+    //                    style={{fontSize: 30}}>
+    //                 <option> Select Classes</option>
+    //                 {classesOptions.map(course => {
+    //                     return (
+    //                         <option>{course}</option>
+    //                     )
+    //                 })}
+    //             </Field>
+    //         )
+    //     }
+    //     return classArray
+    // }
+
     return (
         <Grid container xs={12} className={classes.signUpInfoContainer} justifyContent={"center"}>
             <Grid xs={12} item container justify={"center"} style={{fontSize: 40, fontWeight: 700}}>
@@ -60,29 +90,34 @@ function SignUpPageForm() {
                                 <Field name={"pronouns"} component={"input"} style={{fontSize: 30}}
                                        placeholder={"Enter Pronouns"}/>
                             </Grid>
-                        <Grid>
-
-                            <label> Major </label>
-                            <Field name={"major"} component={"input"} placeholder={"Select Your Major"}
-                                   style={{fontSize: 30}}>
-                            </Field>
-                        </Grid>
                             <Grid>
-                                <label> Current Classes </label>
-                                <Field name={"current_classes"} component={"select"} placeholder={"Select Classes"}
+
+                                <label> Major </label>
+                                <Field name={"major"} component={"input"} placeholder={"Select Your Major"}
                                        style={{fontSize: 30}}>
-                                    <option> Select Classes</option>
-                                    {classesOptions.map(course => {
-                                        return (
-                                            <option>{course}</option>
-                                        )
-                                    })}
                                 </Field>
-                                <Tooltip title={"Add class"} placement={"right"}>
-                                    <Button onClick={() => {
+                            </Grid>
+                            <Grid>
+                                {currClasses.map((field, index) => {
+                                    console.log(field)
+                                        if (index === 0) {
+                                            return (
+                                                <div>
+                                                    <label> Current Classes </label>
+                                                    <Field name={"current_classes"} component={"select"} placeholder={"Select Classes"}
+                                                           style={{fontSize: 30}}>
+                                                        <option> Select Classes</option>
+                                                        {classesOptions.map(course => {
+                                                            return (
+                                                                <option>{course}</option>
+                                                            )
+                                                        })}
+                                                    </Field>
+                                                </div>
+                                            )
+                                        }
                                         return (
-                                            <Field name={"current_classes"} component={"select"}
-                                                   placeholder={"Select Classes"}
+                                            <Field name={`current_classes_${index}`} component={"select"} placeholder={"Select Classes"}
                                                    style={{fontSize: 30}}>
                                                 <option> Select Classes</option>
                                                 {classesOptions.map(course => {
@@ -92,12 +127,20 @@ function SignUpPageForm() {
                                                 })}
                                             </Field>
                                         )
-                                    }}>
-                                        <AddBoxRounded style={{fontSize: 35, color: "white",}}/>
+                                    }
+                                )}
+                                {(currClasses.length < 8) &&
+                                    <Tooltip title={"Add class"} placement={"right"}>
+                                    <Button onClick={(temp, val) => {
+                                    setCurrClasses([...currClasses, 2])
+                                    // setCurrClasses(currClasses.push(val))
+                                    // console.log(val)
+                                }}>
+                                    <AddBoxRounded style={{fontSize: 35, color: "white",}}/>
                                     </Button>
-                                </Tooltip>
+                                    </Tooltip>
+                                }
                             </Grid>
-
                             <Grid>
                                 <label> Graduation Year </label>
                                 <Field name={"grad_year"} component={"select"} placeholder={"Select Year"}
